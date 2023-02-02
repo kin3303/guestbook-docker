@@ -3,15 +3,15 @@
 all: build push pull
 
 build:
-	docker build -t kin3303/$(MODULE_NAME):$(TAG) .
+	docker build -t $(REG)/$(MODULE_NAME):$(TAG) .
 
 push: build
-	docker push kin3303/$(MODULE_NAME):$(TAG)
+	docker push $(REG)/$(MODULE_NAME):$(TAG)
 
 pull: 
-	docker pull kin3303/$(MODULE_NAME):$(TAG)
+	docker pull $(REG)/$(MODULE_NAME):$(TAG)
 
 clean: cleanimages
 
 cleanimages:
-	docker rmi kin3303/$(MODULE_NAME):$(TAG)
+	docker rmi $(REG)/$(MODULE_NAME):$(TAG)
