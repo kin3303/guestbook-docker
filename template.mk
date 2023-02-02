@@ -3,7 +3,7 @@
 all: build push pull
 
 build:
-	docker build -t kin3303/$(MODULE_NAME):$(TAG).
+	docker build -t kin3303/$(MODULE_NAME):$(TAG) .
 
 push: build
 	docker push kin3303/$(MODULE_NAME):$(TAG)
