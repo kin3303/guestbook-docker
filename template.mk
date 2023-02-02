@@ -1,6 +1,8 @@
 .PHONY: $(COMMON_TARGETS)
 
-all: cleanimages build push pull
+all: build push pull
+
+allwithclean: cleanimages all
 
 build:
 	docker build -t kin3303/$(MODULE_NAME):$(TAG) .
