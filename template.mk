@@ -2,8 +2,6 @@
 
 all: build push pull
 
-allwithclean: cleanimages all
-
 build:
 	docker build -t kin3303/$(MODULE_NAME):$(TAG) .
 
