@@ -5,7 +5,8 @@
 - Requrement : Save Flow, Devops Installer in **/tmp** folder
 
 ```console
- $ cd <SourceRoot> 
+ $ git clone https://github.com/kin3303/guestbook-docker.git
+ $ cd guestbook-docker
  $ export TAG=v1
  $ docker login
  $ make
