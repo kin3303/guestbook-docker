@@ -9,9 +9,9 @@ node {
    
   //dockerfile기반 빌드하는 stage ,git소스 ./guestbook 폴더에 dockerfile 이 있어야 함
   //guestbook 프로젝트에 appName 이 guestbook 으로 이미지가 올라감
-  //stage('build image') { 
-  //  app = docker.build("harbor.idtplateer.com/guestbook/repo", "./guestbook")            
-  //}
+  stage('build image') { 
+    app = docker.build("harbor.idtplateer.com/guestbook/repo", "./guestbook")            
+  }
 
   //docker image를 push하는 stage
   //docker.withRegistry 에 harbor-id 는 앞서 설정한 harbor credentials의 ID
