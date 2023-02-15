@@ -19,7 +19,7 @@ node {
     docker.withRegistry('https://harbor.idtplateer.com', 'harbor-id') {
       if (app) {
         //app.push("${env.BUILD_NUMBER}")
-        app.push("latest")
+        //app.push("latest")
         app.push()
       }
     }                                     
