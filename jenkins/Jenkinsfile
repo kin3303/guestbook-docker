@@ -18,7 +18,6 @@ node {
   stage('build and push image') {
     docker.withRegistry('https://harbor.idtplateer.com', 'harbor-id') {
       if (app) {
-        //app.push("${env.BUILD_NUMBER}")
         //app.push("latest")
         app = docker.build("harbor.idtplateer.com/guestbook/repo", "./guestbook").push()
       }
