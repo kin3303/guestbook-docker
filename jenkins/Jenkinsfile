@@ -10,7 +10,7 @@ node {
   //dockerfile기반 빌드하는 stage ,git 베이스 소스기준으로 ./guestbook 폴더에 dockerfile 이 있어야 함
   //guestbook 프로젝트에 appName 이 guestbook 으로 이미지가 올라감
   stage('build image') { 
-    app = docker.build("harbor.idtplateer.com/guestbook/repo", "./guestbook")            
+    app = docker.build("harbor.idtplateer.com/guestbook/gb-frontend", "./guestbook")    
   }
 
   //docker image를 push하는 stage
