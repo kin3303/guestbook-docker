@@ -1,0 +1,27 @@
+node {
+   def app
+   def commit_id
+   stage('preparation') {
+     checkout scm
+     sh "git rev-parse --short HEAD > .git/commit-id"
+     commit_id = readFile('.git/commit-id').trim()
+   }
+   
+   //dockerfile기반 빌드하는 stage ,git소스 ./guestbook 폴더에 dockerfile 이 있어야 함
+   //guestbook 프로젝트에 appName 이 guestbook 으로 이미지가 올라감
+   stage('build image') { 
+     app = docker.build("harbor.idtplateer.com/guestbook/guestbook", "./guestbook")
+                                  
+   }
+   
+   //docker image를 push하는 stage
+   //docker.withRegistry 에 harbor-id 는 앞서 설정한 harbor credentials의 ID
+   stage('push image') {
+     docker.withRegistry('https://harbor.idtplateer.com', 'harbor-id') {
+		if (app) {
+		 app.push("${env.BUILD_NUMBER}")
+		 app.push("latest")
+		}
+     }                                     
+   }                                       
+}
