@@ -14,13 +14,13 @@ node {
    
   //dockerfile기반 빌드하는 stage ,git 베이스 소스기준으로 ./guestbook 폴더에 dockerfile 이 있어야 함
   //guestbook 프로젝트에 appName 이 guestbook 으로 이미지가 올라감
-  stage('build image') { 
+  stage('build docker image') { 
     app = docker.build("$REGISTRY/$HARBOR_NAMESPACE/$APP_NAME", "./guestbook")    
   }
 
   //docker image를 push하는 stage
   //docker.withRegistry 에 harbor-id 는 앞서 설정한 harbor credentials의 ID
-  stage('build and push image') {
+  stage('push docker image to registry') {
     docker.withRegistry("https://$REGISTRY", "$HARBOR_CREDENTIAL") {
       if (app) {
         app.push("latest")
@@ -28,7 +28,8 @@ node {
     }                                     
   }
   
-  stage('helm chart download and test') {
+  // guestbook helm chart 다운로드 및 정적 테스트
+  stage('helm chart download and static test') {
     sh '''#!/bin/bash
           rm -rf projects
           mkdir projects
