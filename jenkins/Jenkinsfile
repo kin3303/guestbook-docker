@@ -30,22 +30,12 @@ node {
   
   stage('helm chart download and test') {
     sh '''#!/bin/bash
-rm -rf projects
-mkdir projects
-cd projects
-git clone https://github.com/kin3303/guestbook.git
-helm lint guestbook
-sudo tee .yamllint > /dev/null <<EOF
-extends: default
-rules:
-  line-length:
-    max: 150
-  trailing-spaces:
-    level: warning
-  key-duplicates:
-    level: error
-EOF
-helm template my-guestbook guestbook --namespace plateer  | yamllint -
+          rm -rf projects
+          mkdir projects
+          cd projects
+          git clone https://github.com/kin3303/guestbook.git
+          helm lint guestbook
+          helm template my-guestbook guestbook --namespace plateer  | yamllint -c ./guestbook/.yamllint
     '''
   }
 }
