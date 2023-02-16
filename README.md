@@ -3,9 +3,6 @@
 ## Upload Guestbook Docker Images
  
  [원본소스](https://github.com/kubernetes/examples/blob/master/guestbook/php-redis/guestbook.php)
- 
- 
- ![Pipeline Settings](./readmeimages/pipelinesettings.png/)
 
 ```console
  $ git clone https://github.com/kin3303/guestbook-docker.git
