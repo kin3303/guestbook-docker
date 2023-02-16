@@ -34,7 +34,7 @@ node {
     cd projects
     git clone https://github.com/kin3303/guestbook.git
     helm lint guestbook
-    sudo tee  .yamllint > /dev/null <<- _EOF_ 
+    sudo tee  .yamllint > /dev/null <<EOF
     extends: default
     rules:
       line-length:
@@ -43,7 +43,7 @@ node {
         level: warning
       key-duplicates:
         level: error
-    _EOF_
+    EOF
     helm template my-guestbook guestbook --namespace plateer  | yamllint -
     '''
   }
