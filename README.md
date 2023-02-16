@@ -1,8 +1,8 @@
 # guestbook-docker
 
-## 시나리오 1 > 단순히 Upload Guestbook Docker Images
+## 시나리오 1 > 단순히 Docker Image 빌드
  
- [원본소스](https://github.com/kubernetes/examples/blob/master/guestbook/php-redis/guestbook.php)
+ [App 참고소스](https://github.com/kubernetes/examples/blob/master/guestbook/php-redis/guestbook.php)
 
 ```console
  $ git clone https://github.com/kin3303/guestbook-docker.git
