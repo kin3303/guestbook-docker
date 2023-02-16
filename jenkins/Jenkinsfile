@@ -30,7 +30,7 @@ node {
   
   stage('helm chart download and test') {
     sh '''#!/bin/bash
-sudo rm -rf projects
+rm -rf projects
 mkdir projects
 cd projects
 git clone https://github.com/kin3303/guestbook.git
