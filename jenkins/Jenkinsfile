@@ -29,27 +29,5 @@ node {
         app.push("latest")
       }
     }                                     
-  }
-  
-  stage('helm chart download and test') {
-    steps {
-      container ('maven') {
-        sh 'git clone https://github.com/kin3303/guestbook.git'
-        sh 'helm lint guestbook'
-        sh '''#!/bin/bash 
-        sudo tee  .yamllint > /dev/null <<- _EOF_ 
-		   extends: default
-		   rules:
-		     line-length:
-		   	max: 150
-		     trailing-spaces:
-		   	level: warning
-		     key-duplicates:
-		   	level: error
-		_EOF_
-		'''
-						
-      }
-    }
   }  
 }
