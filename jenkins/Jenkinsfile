@@ -1,13 +1,10 @@
 node {
   def app
   def commit_id
-  
-  environment {
-    REGISTRY = 'harbor.idtplateer.com'
-    HARBOR_NAMESPACE = 'guestbook'
-    APP_NAME = 'gb-frontend'
-    HARBOR_CREDENTIAL ='harbor-id'
-  }  
+  def REGISTRY = 'harbor.idtplateer.com'
+  def HARBOR_NAMESPACE = 'guestbook'
+  def APP_NAME = 'gb-frontend'
+  def HARBOR_CREDENTIAL ='harbor-id'
   
   stage('preparation') {
     checkout scm
