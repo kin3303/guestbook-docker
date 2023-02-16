@@ -35,7 +35,8 @@ node {
           cd projects
           git clone https://github.com/kin3303/guestbook.git
           helm lint guestbook
-          helm template my-guestbook guestbook --namespace plateer  | yamllint -c ./guestbook/.yamllint
+          mv guestbook/.yamllint .yamllint
+          helm template my-guestbook guestbook --namespace plateer  | yamllint -
     '''
   }
 }
