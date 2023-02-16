@@ -29,6 +29,8 @@ node {
   }
   
   stage('helm chart download and test') {
+    sh 'mkdir projects'
+    sh 'cd projects'
     sh 'git clone https://github.com/kin3303/guestbook.git'
     sh 'helm lint guestbook'
     sh '''#!/bin/bash 
