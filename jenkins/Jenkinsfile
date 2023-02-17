@@ -57,10 +57,11 @@ node {
     '''
   }
 
-  stage('preparation') {
+  stage('helm chart package and upload to registry') {
     withCredentials([usernamePassword(credentialsId: "$HARBOR_CREDENTIAL_NAME", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
       sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.USERNAME} --password=${env.PASSWORD}"
-      sh "ls"
+      sh "helm package projects/guestbook/"
+      sh "helm cm-push guestbook-0.1.0.tgz  guestbook-repo --username=${env.USERNAME} --password=${env.PASSWORD}"
     }
   }    
 }
