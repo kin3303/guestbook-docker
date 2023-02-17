@@ -60,7 +60,6 @@ node {
   stage('preparation') {
     withCredentials([usernamePassword(credentialsId: "$HARBOR_CREDENTIAL_NAME", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
       sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.USERNAME} --password=${env.PASSWORD}"
-      sh "helm package guestbook/"
       sh "ls"
     }
   }    
