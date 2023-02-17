@@ -62,6 +62,8 @@ node {
       sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.USERNAME} --password=${env.PASSWORD}"
       sh "helm package projects/guestbook/"
       sh "helm plugin list"
+      sh "helm plugin install https://github.com/chartmuseum/helm-push"
+      sh "helm plugin list"
       sh "helm cm-push guestbook-0.1.0.tgz  guestbook-repo --username=${env.USERNAME} --password=${env.PASSWORD}"
     }
   }    
