@@ -1,3 +1,11 @@
+properties([
+    parameters([
+        string(name: 'PARAM1', defaultValue: 'default_value', description: 'Description of PARAM1'),
+        booleanParam(name: 'PARAM2', defaultValue: true, description: 'Description of PARAM2'),
+        choice(name: 'PARAM3', choices: ['choice1', 'choice2', 'choice3'], description: 'Description of PARAM3')
+    ])
+])
+
 node {
   def app
   def commit_id
@@ -5,6 +13,12 @@ node {
   def HARBOR_NAMESPACE = 'guestbook'
   def APP_NAME = 'gb-frontend'
   def HARBOR_CREDENTIAL ='harbor-id'
+
+  stage('parameters') {
+    echo "PARAM1 value is: ${params.PARAM1}"
+    echo "PARAM2 value is: ${params.PARAM2}"
+    echo "PARAM3 value is: ${params.PARAM3}"
+  }
   
   stage('preparation') {
     checkout scm
