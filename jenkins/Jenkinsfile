@@ -1,43 +1,53 @@
-node {
-  def app
-  def commit_id
-  def REGISTRY = 'harbor.idtplateer.com'
-  def HARBOR_NAMESPACE = 'guestbook'
-  def APP_NAME = 'gb-frontend'
-  def HARBOR_CREDENTIAL ='harbor-id'
-  
-  stage('preparation') {
-    checkout scm
-    sh "git rev-parse --short HEAD > .git/commit-id"
-    commit_id = readFile('.git/commit-id').trim()
-  }
-   
-  //dockerfile기반 빌드하는 stage ,git 베이스 소스기준으로 ./guestbook 폴더에 dockerfile 이 있어야 함
-  //guestbook 프로젝트에 appName 이 guestbook 으로 이미지가 올라감
-  stage('build docker image') { 
-    app = docker.build("$REGISTRY/$HARBOR_NAMESPACE/$APP_NAME", "./guestbook")    
-  }
-
-  //docker image를 push하는 stage
-  //docker.withRegistry 에 harbor-id 는 앞서 설정한 harbor credentials의 ID
-  stage('push docker image to registry') {
-    docker.withRegistry("https://$REGISTRY", "$HARBOR_CREDENTIAL") {
-      if (app) {
-        app.push("latest")
-      }
-    }                                     
-  }
-  
-  // guestbook helm chart 다운로드 및 정적 테스트
-  stage('helm chart download and static test') {
-    sh '''#!/bin/bash
-          rm -rf projects
-          mkdir projects
-          cd projects
-          git clone https://github.com/kin3303/guestbook.git
-          helm lint guestbook
-          mv guestbook/.yamllint .yamllint
-          helm template my-guestbook guestbook --namespace plateer  | yamllint -
-    '''
-  }
+pipeline {
+    agent any
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    parameters {
+        string(name: 'PARAMETER_NAME', defaultValue: 'default_value', description: 'Parameter Description')
+        booleanParam(name: 'BOOLEAN_PARAM', defaultValue: true, description: 'Boolean Parameter Description')
+    }
+    stages {
+        def app
+        def commit_id
+        def REGISTRY = 'harbor.idtplateer.com'
+        def HARBOR_NAMESPACE = 'guestbook'
+        def APP_NAME = 'gb-frontend'
+        def HARBOR_CREDENTIAL ='harbor-id'
+        
+        stage('preparation') {
+          checkout scm
+          sh "git rev-parse --short HEAD > .git/commit-id"
+          commit_id = readFile('.git/commit-id').trim()
+        }
+         
+        //dockerfile기반 빌드하는 stage ,git 베이스 소스기준으로 ./guestbook 폴더에 dockerfile 이 있어야 함
+        //guestbook 프로젝트에 appName 이 guestbook 으로 이미지가 올라감
+        stage('build docker image') { 
+          app = docker.build("$REGISTRY/$HARBOR_NAMESPACE/$APP_NAME", "./guestbook")    
+        }
+        
+        //docker image를 push하는 stage
+        //docker.withRegistry 에 harbor-id 는 앞서 설정한 harbor credentials의 ID
+        stage('push docker image to registry') {
+          docker.withRegistry("https://$REGISTRY", "$HARBOR_CREDENTIAL") {
+            if (app) {
+              app.push("latest")
+            }
+          }                                     
+        }
+        
+        // guestbook helm chart 다운로드 및 정적 테스트
+        stage('helm chart download and static test') {
+          sh '''#!/bin/bash
+                rm -rf projects
+                mkdir projects
+                cd projects
+                git clone https://github.com/kin3303/guestbook.git
+                helm lint guestbook
+                mv guestbook/.yamllint .yamllint
+                helm template my-guestbook guestbook --namespace plateer  | yamllint -
+          '''
+        }
+    }
 }
