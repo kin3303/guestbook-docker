@@ -1,6 +1,6 @@
 properties([
     parameters([
-        string(name: 'PARAM1', defaultValue: 'default_value', description: 'Description of PARAM1'),
+		string(name: 'PARAM1', defaultValue: 'test', description: 'Description of PARAM1'),
         booleanParam(name: 'PARAM2', defaultValue: true, description: 'Description of PARAM2'),
         choice(name: 'PARAM3', choices: ['choice1', 'choice2', 'choice3'], description: 'Description of PARAM3')
     ])
@@ -9,11 +9,13 @@ properties([
 node {
   def app
   def commit_id
-  def REGISTRY = 'harbor.idtplateer.com'
-  def HARBOR_NAMESPACE = 'guestbook'
-  def APP_NAME = 'gb-frontend'
-  def HARBOR_CREDENTIAL ='harbor-id'
+  def REGISTRY               = 'harbor.idtplateer.com'
+  def HARBOR_NAMESPACE       = 'guestbook'
+  def APP_NAME               = 'gb-frontend'
+  def HARBOR_CREDENTIAL_NAME = 'harbor-id'
 
+
+  
   stage('parameters') {
     echo "PARAM1 value is: ${params.PARAM1}"
     echo "PARAM2 value is: ${params.PARAM2}"
@@ -35,7 +37,7 @@ node {
   //docker image를 push하는 stage
   //docker.withRegistry 에 harbor-id 는 앞서 설정한 harbor credentials의 ID
   stage('push docker image to registry') {
-    docker.withRegistry("https://$REGISTRY", "$HARBOR_CREDENTIAL") {
+    docker.withRegistry("https://$REGISTRY", "$HARBOR_CREDENTIAL_NAME") {
       if (app) {
         app.push("latest")
       }
@@ -54,4 +56,12 @@ node {
           helm template my-guestbook guestbook --namespace plateer  | yamllint -
     '''
   }
+
+  stage('preparation') {
+	  withCredentials([usernamePassword(credentialsId: "$HARBOR_CREDENTIAL_NAME", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+		sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.USERNAME} --password=${env.PASSWORD}"
+        sh "helm package guestbook/"
+        sh "ls"
+	  }
+  }    
 }
