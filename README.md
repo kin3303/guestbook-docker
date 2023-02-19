@@ -18,7 +18,7 @@
 ###  Jenkins Pipeline 설정방법
  + New Item -> Pipeline
  
-  ![Pipeline Settings](./jenkins/pipelineconfig.png/)
+  ![Pipeline Settings](./pipelineconfig.png/)
 
 ###  Jenkins Pipeline 구성
   1. app image 빌드 및 harbor 에 이미지 업로드
