@@ -19,7 +19,7 @@
  
 ###  Jenkins Pipeline 설정방법
 
-- + New Item -> Pipeline 
+- New Item -> Pipeline 
 - Definition : Pipeline script from SCM
     - SCM : Git
     - Repositories
