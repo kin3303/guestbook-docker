@@ -15,14 +15,25 @@
 
 ## 시나리오2 > Jenkins Pipeline 으로 사용
 
-###  Jenkins Pipeline 설정방법
- + New Item -> Pipeline
+ + New Item -> Pipeline 
  
-  ![Pipeline Settings](./pipelineconfig.png/)
+###  Jenkins Pipeline 설정방법
 
-###  Jenkins Pipeline 구성
+- Definition : Pipeline script from SCM
+    - SCM : Git
+    - Repositories
+	        - Repository URL : https://github.com/kin3303/guestbook-docker.git
+		       - Credentials : GitHub Credentials
+		       - Branches to build : */master
+	   - Script Path : ci 혹은 cd /Jenkinsfile
+
+###  CI Jenkins Pipeline 구성
   1. app image 빌드 및 harbor 에 이미지 업로드
   2. helm chart 패키징 및 원격 저장소 업로드
+     -  [관련소스](https://github.com/kin3303/guestbook)
+
+### CD Jenkins Pipeline 구성
+  1. helm chart 패키징 및 원격 저장소 업로드
      -  [관련소스](https://github.com/kin3303/guestbook)
 
 
