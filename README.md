@@ -15,10 +15,11 @@
 
 ## 시나리오2 > Jenkins Pipeline 으로 사용
 
- + New Item -> Pipeline 
+
  
 ###  Jenkins Pipeline 설정방법
 
+- + New Item -> Pipeline 
 - Definition : Pipeline script from SCM
     - SCM : Git
     - Repositories
