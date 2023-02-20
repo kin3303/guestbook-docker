@@ -37,7 +37,7 @@
 ```
 
 ### CD Jenkins Pipeline 구성
-  1. helm chart 패키징 및 원격 저장소 업로드
+  1. helm chart 설치 및 동적 테스트
      -  [관련소스](https://github.com/kin3303/guestbook)
 ```console
 - New Item -> Pipeline 
