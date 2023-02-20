@@ -25,7 +25,7 @@
   2. helm chart 패키징 및 원격 저장소 업로드
      -  [관련소스](https://github.com/kin3303/guestbook)
      
-```
+```console
 - New Item -> Pipeline 
 - Definition : Pipeline script from SCM
     - SCM : Git
