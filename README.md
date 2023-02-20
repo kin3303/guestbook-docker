@@ -33,11 +33,20 @@
 	 - Repository URL : https://github.com/kin3303/guestbook-docker.git
 	 - Credentials : GitHub Credentials
 	 - Branches to build : */master
-    - Script Path : ci 혹은 cd /Jenkinsfile
+    - Script Path : ci/Jenkinsfile
 ```
 
 ### CD Jenkins Pipeline 구성
   1. helm chart 패키징 및 원격 저장소 업로드
      -  [관련소스](https://github.com/kin3303/guestbook)
-
+```console
+- New Item -> Pipeline 
+- Definition : Pipeline script from SCM
+    - SCM : Git
+    - Repositories
+	 - Repository URL : https://github.com/kin3303/guestbook-docker.git
+	 - Credentials : GitHub Credentials
+	 - Branches to build : */master
+    - Script Path : cd/Jenkinsfile
+```
 
