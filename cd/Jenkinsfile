@@ -1,1 +1,39 @@
+node { 
+  def commit_id  
+ 
+  stage('preparation') {
+    checkout scm
+    sh "git rev-parse --short HEAD > .git/commit-id"
+    commit_id = readFile('.git/commit-id').trim()
+  }
 
+  stage('Deploy to Dev') {
+    dir("cd") {
+      sh "kubectl create ns dev" 
+      sh "helm upgrade --install my-guestbook guestbook-repo/guestbook --version 0.1.0  --values dev/values.yaml --namespace dev  --wait"
+      input message: 'Dev deployment successful. Proceed with next step?',ok: 'Proceed', submitterParameter: 'USER_APPROVAL'
+    }
+  }
+
+  stage('Clean Dev Resources') { 
+	  sh "helm uninstall my-guestbook -n dev"
+	  sh "kubectl delete pvc -l  app.kubernetes.io/instance=my-guestbook  -n dev"
+	  sh "kubectl delete ns dev"
+  }  
+  
+  if (env.USER_APPROVAL == 'Proceed') {
+    stage('Deploy to QA') {
+      dir("cd") {
+	     sh "kubectl create ns qa" 
+	     sh "helm upgrade --install my-guestbook-dev guestbook-repo/guestbook --version 0.1.0  --values qa/values.yaml --namespace qa  --wait"
+	     input message: 'QA deployment successful. Proceed with next step?',ok: 'Proceed', submitterParameter: 'USER_APPROVAL'
+      }
+    }
+  }
+
+  stage('Clean QA Resources') { 
+	  sh "helm uninstall my-guestbook -n qa"
+	  sh "kubectl delete pvc -l  app.kubernetes.io/instance=my-guestbook -n qa"
+	  sh "kubectl delete ns qa"
+  }    
+}
