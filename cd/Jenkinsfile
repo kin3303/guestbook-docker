@@ -16,24 +16,24 @@ node {
   }
 
   stage('Clean Dev Resources') { 
-	  sh "helm uninstall my-guestbook -n dev"
-	  sh "kubectl delete pvc -l  app.kubernetes.io/instance=my-guestbook  -n dev"
-	  sh "kubectl delete ns dev"
+    sh "helm uninstall my-guestbook -n dev"
+    sh "kubectl delete pvc -l  app.kubernetes.io/instance=my-guestbook  -n dev"
+    sh "kubectl delete ns dev"
   }  
   
   if (env.USER_APPROVAL == 'Proceed') {
     stage('Deploy to QA') {
       dir("cd") {
-	     sh "kubectl create ns qa" 
-	     sh "helm upgrade --install my-guestbook-dev guestbook-repo/guestbook --version 0.1.0  --values qa/values.yaml --namespace qa  --wait"
-	     input message: 'QA deployment successful. Proceed with next step?',ok: 'Proceed', submitterParameter: 'USER_APPROVAL'
+        sh "kubectl create ns qa" 
+        sh "helm upgrade --install my-guestbook-dev guestbook-repo/guestbook --version 0.1.0  --values qa/values.yaml --namespace qa  --wait"
+        input message: 'QA deployment successful. Proceed with next step?',ok: 'Proceed', submitterParameter: 'USER_APPROVAL'
       }
     }
   }
 
   stage('Clean QA Resources') { 
-	  sh "helm uninstall my-guestbook -n qa"
-	  sh "kubectl delete pvc -l  app.kubernetes.io/instance=my-guestbook -n qa"
-	  sh "kubectl delete ns qa"
+    sh "helm uninstall my-guestbook -n qa"
+    sh "kubectl delete pvc -l  app.kubernetes.io/instance=my-guestbook -n qa"
+    sh "kubectl delete ns qa"
   }    
 }
