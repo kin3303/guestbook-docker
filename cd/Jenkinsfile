@@ -1,5 +1,10 @@
 node { 
-  def commit_id  
+  def app
+  def commit_id
+  def REGISTRY               = 'harbor.idtplateer.com'
+  def HARBOR_NAMESPACE       = 'guestbook'
+  def APP_NAME               = 'gb-frontend'
+  def HARBOR_CREDENTIAL_NAME = 'harbor-id'
  
   stage('preparation') {
     checkout scm
@@ -7,10 +12,20 @@ node {
     commit_id = readFile('.git/commit-id').trim()
   }
 
+  stage('helm chart searching from registry') {
+    withCredentials([usernamePassword(credentialsId: "$HARBOR_CREDENTIAL_NAME", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+      sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.USERNAME} --password=${env.PASSWORD}"
+      sh "mkdir guestbook-from-harbor"
+      sh "cd guestbook-from-harbor"
+      sh "helm repo update"
+      sh "helm search repo guestbook-repo -l" 
+    }
+  }
+  
   stage('Deploy to Dev') {
-    dir("cd") {
+    dir("cd/dev") {
       sh "kubectl create ns dev" 
-      sh "helm upgrade --install my-guestbook guestbook-repo/guestbook --version 0.1.0  --values dev/values.yaml --namespace dev  --wait"
+      sh "helm upgrade --install my-guestbook guestbook-repo/guestbook --version 0.1.0  --values values.yaml --namespace dev  --wait"
       input message: 'Dev deployment successful. Proceed with next step?',ok: 'Proceed', submitterParameter: 'USER_APPROVAL'
     }
   }
@@ -23,9 +38,9 @@ node {
   
   if (env.USER_APPROVAL == 'Proceed') {
     stage('Deploy to QA') {
-      dir("cd") {
+      dir("cd/qa") {
         sh "kubectl create ns qa" 
-        sh "helm upgrade --install my-guestbook-dev guestbook-repo/guestbook --version 0.1.0  --values qa/values.yaml --namespace qa  --wait"
+        sh "helm upgrade --install my-guestbook-dev guestbook-repo/guestbook --version 0.1.0  --values values.yaml --namespace qa  --wait"
         input message: 'QA deployment successful. Proceed with next step?',ok: 'Proceed', submitterParameter: 'USER_APPROVAL'
       }
     }
