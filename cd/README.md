@@ -54,10 +54,33 @@
 				- --create-namespace
 			- Values:
 				- https://github.com/kin3303/guestbook-docker/tree/master/cd/dev 의 values.yaml 값을 복사하여 기입
+		- Process (+)
+			- Name : Uninstall Application
+			- Process : Undeploy
+			- OK
+				- New step
+					- Name : Delete Release
+					- Step type : Pligins
+					- Plugin Category : Container Management > Helm
+						- EC-Helm - Delete Release
+							- Configuration Name : helmcfg - Guestbook
+							- Release name : my-guestbook
+							- Options : -n qa
+							- OK
+				- Step Add(+)
+					- Name : Delete PVC
+					- Step type : Command
+					- Define step
+						- Run this Step on a
+							- Utility Resource
+						- Run Shell/Script
+							- kubectl delete pvc -l  app.kubernetes.io/instance=my-guestbook -n qa
+							- kubectl delete ns qa
 	- New cluster
-		- Environment name : dev
+		- Environment name : Guestbook-QA
 		- Project : Guestbook
-		- Cluster name : dev
+		- Cluster name : Guestbook-QA
 		- Configuratoin provider : Kubernetes (via Helm)(Supports microservice model)
 		- Configuration name : helmcfg-Guestbook
-		- Namespace : dev
+		- Namespace : qa
+ 
