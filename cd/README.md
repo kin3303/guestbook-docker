@@ -26,6 +26,16 @@
 				- Helm version : 3.x.x
 				- Config file : Default
 				- Test Connection > OK 확인
+- Plugin Management
+	- Actions
+		- Configure
+			- New configuration
+				- Name : kubecfg
+				- Project : Guestbook
+				- Plugin : EC-Kubectl 
+				- Kubectl path : /usr/local/bin/kubectl
+				- Kubeconfig Source : kubeconfigDefault
+				- OK
 
 ### Deployment Automation
 
@@ -53,7 +63,7 @@
 			- Additional options : 
 				- --create-namespace
 			- Values:
-				- https://github.com/kin3303/guestbook-docker/tree/master/cd/dev 의 values.yaml 값을 복사하여 기입
+				- https://github.com/kin3303/guestbook-docker/tree/master/cd/qa 의 values.yaml 값을 복사하여 기입
 		- Process (+)
 			- Name : Uninstall Application
 			- Process : Undeploy
