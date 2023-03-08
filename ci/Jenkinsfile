@@ -1,8 +1,6 @@
 properties([
-    parameters([
-		string(name: 'PARAM1', defaultValue: 'test', description: 'Description of PARAM1'),
-        booleanParam(name: 'PARAM2', defaultValue: true, description: 'Description of PARAM2'),
-        choice(name: 'PARAM3', choices: ['choice1', 'choice2', 'choice3'], description: 'Description of PARAM3')
+    parameters([ 
+        booleanParam(name: 'InstallPlugin', defaultValue: true, description: 'Check true, if you need to install cm-push plugin'), 
     ])
 ])
 
@@ -61,6 +59,9 @@ node {
     withCredentials([usernamePassword(credentialsId: "$HARBOR_CREDENTIAL_NAME", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
       sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.USERNAME} --password=${env.PASSWORD}"
       sh "helm package projects/guestbook/"
+      if (${params.InstallPlugin}) {
+        sh "helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1"
+      }
       sh "helm cm-push guestbook-0.1.0.tgz  guestbook-repo --username=${env.USERNAME} --password=${env.PASSWORD}"
     }
   }    
