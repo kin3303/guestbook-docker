@@ -44,6 +44,7 @@ node {
         sh "helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1"
       }
       sh "helm cm-push hashicup-0.1.0.tgz  hashicup-repo --username=${env.USERNAME} --password=${env.PASSWORD}"
+      sh "helm repo remove hashicup-repo"
     }
   }    
 }
