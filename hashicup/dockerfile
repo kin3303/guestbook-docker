@@ -1,0 +1,65 @@
+properties([
+    parameters([ 
+        booleanParam(name: 'InstallPlugin', defaultValue: true, description: 'Check true, if you need to install cm-push plugin'), 
+    ])
+])
+
+node {
+  def app
+  def commit_id
+  def REGISTRY               = 'harbor.idtplateer.com'
+  def HARBOR_NAMESPACE       = 'hashicup'
+  def APP_NAME               = 'gb-frontend'
+  def HARBOR_CREDENTIAL_NAME = 'harbor-id'
+
+
+  
+  stage('parameters') {
+    echo "PARAM1 value is: ${params.PARAM1}"
+    echo "PARAM2 value is: ${params.PARAM2}"
+    echo "PARAM3 value is: ${params.PARAM3}"
+  }
+  
+  stage('preparation') {
+    checkout scm
+    sh "git rev-parse --short HEAD > .git/commit-id"
+    commit_id = readFile('.git/commit-id').trim()
+  }
+   
+  //dockerfile기반 빌드하는 stage ,git 베이스 소스기준으로 ./hashicup 폴더에 dockerfile 이 있어야 함
+  //hashicup 프로젝트에 appName 이 hashicup 으로 이미지가 올라감
+  stage('build docker image') { 
+    app = docker.build("$REGISTRY/$HARBOR_NAMESPACE/$APP_NAME", "./hashicup")    
+  }
+
+  //docker image를 push하는 stage
+  //docker.withRegistry 에 harbor-id 는 앞서 설정한 harbor credentials의 ID
+  stage('push docker image to registry') {
+    docker.withRegistry("https://$REGISTRY", "$HARBOR_CREDENTIAL_NAME") {
+      if (app) {
+        app.push("latest")
+      }
+    }                                     
+  }
+  
+  // hashicup helm chart 다운로드 및 정적 테스트
+  stage('helm chart download and static test') {
+    sh '''#!/bin/bash
+          rm -rf projects
+          mkdir projects
+          cd projects
+          git clone https://github.com/kin3303/hashicup.git
+    '''
+  }
+
+  stage('helm chart package and upload to registry') {
+    withCredentials([usernamePassword(credentialsId: "$HARBOR_CREDENTIAL_NAME", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+      sh "helm repo add hashicup-repo https://$REGISTRY/chartrepo/hashicup --username=${env.USERNAME} --password=${env.PASSWORD}"
+      sh "helm package projects/hashicup/"
+      if (params.InstallPlugin) {
+        sh "helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1"
+      }
+      sh "helm cm-push hashicup-0.1.0.tgz  hashicup-repo --username=${env.USERNAME} --password=${env.PASSWORD}"
+    }
+  }    
+}
