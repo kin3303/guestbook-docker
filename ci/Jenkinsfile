@@ -72,7 +72,7 @@ node {
       //sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.UN} --password=${env.PS}" 
       sh "helm package projects/guestbook/"
       if (params.InstallPlugin) {
-        sh "if ! helm plugin ls | grep -q cm-push; then; helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1 fi"
+        //sh "if ! helm plugin ls | grep -q cm-push; then; helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1 fi"
         //sh "helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1"
       }
       sh "helm cm-push guestbook-0.1.0.tgz  guestbook-repo --username=${env.UN} --password=${env.PS}" 
