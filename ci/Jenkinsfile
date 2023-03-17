@@ -1,3 +1,13 @@
+def secrets = [ 
+  [ 
+    path: 'jenkins/harbor_cred', engineVersion:2, secretValues: [ 
+        [envVar: 'UN', vaultKey: 'username'], 
+        [envVar: 'PS', vaultKey: 'password'],  
+    ] 
+  ] 
+] 
+def configuration = [vaultUrl: 'https://vault.idtplateer.com',  vaultCredentialId: 'vault_cred', engineVersion: 2] 
+
 properties([
     parameters([ 
         booleanParam(name: 'InstallPlugin', defaultValue: true, description: 'Check true, if you need to install cm-push plugin'), 
@@ -56,14 +66,14 @@ node {
   }
 
   stage('helm chart package and upload to registry') {
-    withCredentials([usernamePassword(credentialsId: "$HARBOR_CREDENTIAL_NAME", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+    withVault([configuration: configuration, vaultSecrets: secrets]) { 
       sh "helm repo remove  guestbook-repo"
-      sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.USERNAME} --password=${env.PASSWORD}"
+      sh "helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.UN} --password=${env.PS}" 
       sh "helm package projects/guestbook/"
       if (params.InstallPlugin) {
         sh "helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1"
       }
-      sh "helm cm-push guestbook-0.1.0.tgz  guestbook-repo --username=${env.USERNAME} --password=${env.PASSWORD}"
+      sh "helm cm-push guestbook-0.1.0.tgz  guestbook-repo --username=${env.UN} --password=${env.PS}" 
       sh "helm repo remove guestbook-repo"
     }
   }    
