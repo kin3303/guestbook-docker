@@ -67,13 +67,10 @@ node {
 
   stage('helm chart package and upload to registry') {
     withVault([configuration: configuration, vaultSecrets: secrets]) { 
- 
       sh "if ! (helm repo list | grep -q guestbook-repo); then helm repo add guestbook-repo https://$REGISTRY/chartrepo/guestbook --username=${env.UN} --password=${env.PS}; fi"
-
       sh "helm package projects/guestbook/"
       if (params.InstallPlugin) {
         sh "if ! helm plugin list | grep -q cm-push; then helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1; fi"
-        //sh "helm plugin install https://github.com/chartmuseum/helm-push > /dev/null 2>&1"
       }
       sh "helm cm-push guestbook-0.1.0.tgz  guestbook-repo --username=${env.UN} --password=${env.PS}" 
       sh "helm repo remove guestbook-repo"
